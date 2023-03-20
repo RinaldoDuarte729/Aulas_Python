@@ -1,0 +1,24 @@
+import pandas as pd
+import numpy as np
+
+# Ler o arquivo agora.tsv
+df = pd.read_csv(r'C:\Users\Rinaldo Duarte\Downloads\agora.tsv', sep='\t')
+
+# Converter as colunas de data para o formato correto
+df['Data Abertura'] = pd.to_datetime(df['Data Abertura'], format='%d/%m/%Y %H:%M:%S')
+df['Data Resolução'] = pd.to_datetime(df['Data Resolução'], format='%d/%m/%Y %H:%M:%S')
+
+# Calcular a diferença em dias úteis entre as datas
+df['Dias úteis'] = np.busday_count(df['Data Abertura'].dt.date, df['Data Resolução'].dt.date)
+
+# Filtrar por LAT
+df = df[df['LAT'] == 'LAT']
+
+# Separar por Tipo de Solicitação e contar o número de solicitações
+tipo_solicitacao = df.groupby('Tipo Solicitação')['Tipo Solicitação'].count()
+
+# Ordenar do maior para o menor número de dias úteis
+df = df.sort_values('Dias úteis', ascending=False)
+
+# Mostrar o resultado
+tipo_solicitacao
